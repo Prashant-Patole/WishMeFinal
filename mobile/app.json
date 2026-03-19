@@ -2,6 +2,7 @@
   "expo": {
     "name": "WishMe",
     "slug": "wishme",
+    "owner": "prashant1111",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
