@@ -1,23 +1,31 @@
 const { getDefaultConfig } = require("expo/metro-config");
 const path = require("path");
+const fs = require("fs");
 
 const projectRoot = __dirname;
-const mobileModules = path.resolve(projectRoot, "node_modules");
 
 const config = getDefaultConfig(projectRoot);
 
-// Required for expo-router/entry resolution
 config.resolver.unstable_enablePackageExports = true;
 
-// Force react and react-native to always resolve from THIS project's node_modules.
-// Prevents duplicate React instance crash ("useState of null") that can happen
-// when another node_modules directory exists at a parent level.
-config.resolver.resolveRequest = (context, moduleName, platform) => {
-  if (moduleName === "react" || moduleName === "react-native") {
-    const resolved = require.resolve(moduleName, { paths: [mobileModules] });
-    return { filePath: resolved, type: "sourceFile" };
-  }
-  return context.resolveRequest(context, moduleName, platform);
-};
+// Only pin React/React Native resolution when running inside a monorepo
+// (e.g. the Replit workspace) where a parent node_modules could supply a
+// duplicate React instance and cause "useState of null" crashes.
+// On EAS Build servers there is no parent node_modules, so we skip this.
+const parentNodeModules = path.resolve(projectRoot, "..", "node_modules");
+if (fs.existsSync(parentNodeModules)) {
+  const mobileModules = path.resolve(projectRoot, "node_modules");
+  config.resolver.resolveRequest = (context, moduleName, platform) => {
+    if (moduleName === "react" || moduleName === "react-native") {
+      try {
+        const resolved = require.resolve(moduleName, { paths: [mobileModules] });
+        return { filePath: resolved, type: "sourceFile" };
+      } catch (_) {
+        // fall through to default resolver
+      }
+    }
+    return context.resolveRequest(context, moduleName, platform);
+  };
+}
 
 module.exports = config;
