@@ -3,6 +3,9 @@ node_modules/
 dist/
 web-build/
 
+# npm lockfile — this project uses pnpm; never commit package-lock.json
+package-lock.json
+
 # Native — uncomment these to ignore generated native folders
 # If you want to commit android/ and ios/ (recommended for signing configs), keep them commented
 # android/

@@ -22,15 +22,25 @@ WishMeFinal/
 
 ## Setup Steps (After Cloning)
 
-```bash
-# Install dependencies inside this folder ONLY — never at a parent level
-npm install
+**Prerequisites:** Node >= 18 and pnpm >= 9
 
-# Start dev server
+```bash
+# 1. Install dependencies from the REPO ROOT (not inside mobile/)
+#    This is a pnpm workspace — running pnpm install at the root
+#    installs everything for the mobile package correctly.
+pnpm install
+
+# 2. Start the Expo dev server
+cd mobile
 npx expo start
 
-# Press 'a' for Android emulator, 'i' for iOS simulator (Mac only), or scan QR with Expo Go
+# Press 'a' for Android emulator, 'i' for iOS simulator (Mac only),
+# or scan the QR code with Expo Go on Android
 ```
+
+> **Do NOT run `npm install` or `yarn install`.**
+> This repo uses pnpm workspaces. Using npm/yarn produces broken Metro
+> installs (transitive dependencies like `metro-runtime` become orphaned).
 
 ---
 
