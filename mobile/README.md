@@ -10,7 +10,7 @@ WishMeFinal/
 │   └── (tabs)/             # Add your tab screens here
 ├── assets/images/          # App icons and splash screens
 ├── components/             # Shared UI components
-├── context/                # React context providers
+├── contexts/               # React context providers (AuthContext, DrawerContext, ThemeContext)
 ├── constants/              # App constants (colors, etc.)
 ├── hooks/                  # Custom hooks
 ├── app.json                # Expo config (newArchEnabled: true, reactCompiler: false)
@@ -41,8 +41,9 @@ npx expo start
 npx expo prebuild --platform android --clean
 ```
 
-### Step 2 — Apply gradle.properties config
-Open `android/gradle.properties` and add at the bottom:
+### Step 2 — Apply gradle.properties config (ALREADY DONE in this repo)
+The `android/gradle.properties` is already configured. Values are pre-set to the keystore credentials below.
+To update: open `android/gradle.properties` and edit:
 ```properties
 newArchEnabled=true
 MYAPP_RELEASE_STORE_FILE=my-release-key.jks
@@ -51,8 +52,9 @@ MYAPP_RELEASE_STORE_PASSWORD=aseas@#
 MYAPP_RELEASE_KEY_PASSWORD=aseas@#
 ```
 
-### Step 3 — Add signingConfigs to android/app/build.gradle
-Inside the `android { }` block, place `signingConfigs` **outside and above** `buildTypes`:
+### Step 3 — Add signingConfigs to android/app/build.gradle (ALREADY DONE in this repo)
+The `android/app/build.gradle` already has the `signingConfigs.release` block inside `android { }` above `buildTypes`.
+For reference, the structure looks like:
 
 ```groovy
 android {
@@ -153,3 +155,13 @@ open ios/WishMe.xcworkspace
 | `metro.config.js` | `resolveRequest` hook | Forces single react/react-native instance (prevents `useState of null` crash) |
 | `app/_layout.tsx` | `KeyboardProvider` removed | Crashes Android release builds |
 | `app/_layout.tsx` | No `KeyboardAwareScrollViewCompat` | Use `KeyboardAvoidingView` from react-native instead |
+
+---
+
+## Security — Before Production Release
+
+The signing credentials in `android/gradle.properties` (`aseas@#`, `my-key-alias`) are placeholders included for convenience during development. **For any real production release:**
+
+1. Generate a new keystore with a strong, unique password.
+2. Update `MYAPP_RELEASE_STORE_PASSWORD` and `MYAPP_RELEASE_KEY_PASSWORD` in `gradle.properties`.
+3. Keep the `.jks` file and passwords out of version control (add to `.gitignore`).
