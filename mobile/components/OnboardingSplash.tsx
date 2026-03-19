@@ -298,7 +298,7 @@ export default function OnboardingSplash({ onComplete }: Props) {
                   style={{ position: 'absolute', top: 0, left: 0, width: SCREEN_W, height: SCREEN_W }}
                   resizeMode="cover"
                   onLoad={() => console.log(`[Splash] image ${screenIndex} loaded`)}
-                  onLayout={(e) => console.log(`[Splash] imageLayout ${screenIndex}:`, e.nativeEvent.layout)}
+                  onLayout={(e) => console.log('[Splash] imageLayout:', screenIndex, e.nativeEvent.layout)}
                   onError={(e) => console.log(`[Splash] image ${screenIndex} error:`, e.nativeEvent.error)}
                 />
               </Animated.View>
