@@ -30,7 +30,7 @@ const SLIDES = [
     id: '1',
     title: 'Wish a Friend',
     description: 'Send personalized video wishes to your loved ones',
-    image: require('../assets/splash/splash1.png'),
+    image: require('../assets/splash/splash1.jpeg'),
   },
   {
     id: '2',
