@@ -1,4 +1,4 @@
-# WishMe — Expo React Native App
+# WishMe — Expo React Native App (Android + iOS)
 
 ## Project Structure
 
@@ -23,18 +23,18 @@ WishMeFinal/
 ## Setup Steps (After Cloning)
 
 ```bash
-# 1. Install dependencies (inside this folder only — never at a parent level)
+# Install dependencies inside this folder ONLY — never at a parent level
 npm install
 
-# 2. Start dev server
+# Start dev server
 npx expo start
 
-# 3. Press 'a' to open on Android emulator or scan QR with Expo Go
+# Press 'a' for Android emulator, 'i' for iOS simulator (Mac only), or scan QR with Expo Go
 ```
 
 ---
 
-## Building a Release APK on Windows
+## Building a Release APK — Android (Windows)
 
 ### Step 1 — Generate the Android project
 ```bash
@@ -42,7 +42,7 @@ npx expo prebuild --platform android --clean
 ```
 
 ### Step 2 — Apply gradle.properties config
-Open `android/gradle.properties` and add these lines at the bottom:
+Open `android/gradle.properties` and add at the bottom:
 ```properties
 newArchEnabled=true
 MYAPP_RELEASE_STORE_FILE=my-release-key.jks
@@ -52,8 +52,7 @@ MYAPP_RELEASE_KEY_PASSWORD=aseas@#
 ```
 
 ### Step 3 — Add signingConfigs to android/app/build.gradle
-In `android/app/build.gradle`, find the `android { }` block.
-Place the `signingConfigs` block OUTSIDE AND ABOVE `buildTypes`:
+Inside the `android { }` block, place `signingConfigs` **outside and above** `buildTypes`:
 
 ```groovy
 android {
@@ -80,7 +79,7 @@ android {
 ```
 
 ### Step 4 — Place your keystore file
-Copy your `my-release-key.jks` file into the `android/app/` folder.
+Copy `my-release-key.jks` into the `android/app/` folder.
 
 ### Step 5 — Build the release APK
 ```bash
@@ -88,13 +87,13 @@ cd android
 .\gradlew assembleRelease --rerun-tasks
 ```
 
-The APK will be at:
+APK output path:
 ```
 android\app\build\outputs\apk\release\app-release.apk
 ```
 
 ### If gradle clean fails (cache issues)
-Do NOT use `gradle clean`. Instead, manually delete these folders:
+Manually delete these two folders instead:
 ```
 android\app\.cxx
 android\app\build
@@ -106,23 +105,51 @@ Then re-run:
 
 ---
 
+## Building for iOS
+
+### Option A — Using EAS Build (Recommended for Windows users)
+
+EAS Build runs the iOS build on Expo's cloud servers — no Mac required.
+
+```bash
+# Install EAS CLI
+npm install -g eas-cli
+
+# Log in to your Expo account
+eas login
+
+# Configure EAS for this project (first time only)
+eas build:configure
+
+# Build iOS IPA
+eas build --platform ios --profile production
+```
+
+You will be guided to connect your Apple Developer account during the first build.
+The IPA file will be available for download from the Expo dashboard.
+
+### Option B — Build locally on a Mac
+
+```bash
+# Generate the iOS project
+npx expo prebuild --platform ios --clean
+
+# Open in Xcode
+open ios/WishMe.xcworkspace
+
+# In Xcode: Product → Archive → Distribute App
+```
+
+---
+
 ## Config Fix Notes
 
 | File | Fix Applied | Why |
 |------|------------|-----|
-| `app.json` | `newArchEnabled: true` | Required by reanimated/worklets |
+| `app.json` | `newArchEnabled: true` | Required by reanimated/worklets (both platforms) |
 | `app.json` | `reactCompiler: false` | Prevents `useMemoCache` crash in release |
 | `babel.config.js` | `api.cache(false)` | Prevents stale React Compiler transforms in release |
 | `metro.config.js` | `unstable_enablePackageExports: true` | Fixes expo-router/entry resolution |
 | `metro.config.js` | `resolveRequest` hook | Forces single react/react-native instance (prevents `useState of null` crash) |
 | `app/_layout.tsx` | `KeyboardProvider` removed | Crashes Android release builds |
-| `app/_layout.tsx` | No `KeyboardAwareScrollViewCompat` | Crashes Android release builds |
-
----
-
-## Adding API Integration (Later)
-
-The backend is already ready. When you're ready to connect:
-1. Add your API base URL to `constants/`
-2. Create API service files in a `services/` folder
-3. Update screens to use real data instead of mock data
+| `app/_layout.tsx` | No `KeyboardAwareScrollViewCompat` | Use `KeyboardAvoidingView` from react-native instead |
