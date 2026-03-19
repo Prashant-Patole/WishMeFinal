@@ -35,7 +35,7 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd mobile && npx expo start --tunnel --port 8082"
+args = "cd mobile && npx expo start --tunnel --port 8082 --clear"
 
 [agent]
 stack = "PNPM_WORKSPACE"
