@@ -279,7 +279,7 @@ export default function OnboardingSplash({ onComplete }: Props) {
           ) : (
             /* ── Image Slide Screen ───────────────────────── */
             <Animated.View style={[StyleSheet.absoluteFillObject, { opacity: screenOpacity }]}>
-              {/* Square image container at top — matches square image dimensions so full subject is visible */}
+              {/* Tall image container (SCREEN_W × 1.6) — contain keeps full subject visible without cropping */}
               <Animated.View
                 style={[
                   {
