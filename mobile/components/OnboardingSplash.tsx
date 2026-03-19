@@ -21,6 +21,7 @@ import { radius, shadows } from '@/constants/theme';
 import { useTheme } from '@/contexts/ThemeContext';
 
 const SCREEN_W = Dimensions.get('window').width;
+const SCREEN_H = Dimensions.get('window').height;
 console.log('[Splash] module loaded SCREEN_W=', SCREEN_W);
 
 const LOGO = require('../assets/images/wishme-logo.png');
@@ -288,7 +289,7 @@ export default function OnboardingSplash({ onComplete }: Props) {
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: SCREEN_W * 1.6,
+                    height: SCREEN_H,
                     backgroundColor: '#000',
                   },
                   { transform: [{ scale: imageScale }] },
@@ -296,7 +297,7 @@ export default function OnboardingSplash({ onComplete }: Props) {
               >
                 <Image
                   source={slide!.image}
-                  style={{ position: 'absolute', top: 0, left: 0, width: SCREEN_W, height: SCREEN_W }}
+                  style={{ position: 'absolute', top: 0, left: 0, width: SCREEN_W, height: SCREEN_H }}
                   resizeMode="cover"
                   onLoad={() => console.log(`[Splash] image ${screenIndex} loaded`)}
                   onLayout={(e) => {
