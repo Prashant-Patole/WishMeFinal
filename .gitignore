@@ -2,11 +2,13 @@ node_modules/
 .expo/
 dist/
 web-build/
-android/
-ios/
 
-# Native
-*.orig.*
+# Native — uncomment these to ignore generated native folders
+# If you want to commit android/ and ios/ (recommended for signing configs), keep them commented
+# android/
+# ios/
+
+# Keystore — NEVER commit your keystore file
 *.jks
 *.p8
 *.p12
