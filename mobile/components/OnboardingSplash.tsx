@@ -1,4 +1,4 @@
-import { AVPlaybackStatus, ResizeMode, Video } from 'expo-av';
+import { VideoView, useVideoPlayer } from 'expo-video';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -146,6 +146,31 @@ export default function OnboardingSplash({ onComplete }: Props) {
     advanceRef.current();
   }, [screenIndex]);
 
+  const introPlayer = useVideoPlayer(INTRO_VIDEO, (p) => {
+    p.loop = false;
+    p.muted = true;
+  });
+
+  useEffect(() => {
+    if (!isReady || screenIndex !== 0 || Platform.OS === 'web') return;
+    const sub = introPlayer.addListener('statusChange', ({ status, error }) => {
+      if (status === 'readyToPlay') {
+        console.log('[Splash] video readyToPlay — playing + 5s timer');
+        introPlayer.play();
+        if (videoTimeoutRef.current) clearTimeout(videoTimeoutRef.current);
+        videoTimeoutRef.current = setTimeout(() => {
+          console.log('[Splash] 5s video timer fired');
+          advanceFromVideo();
+        }, 5000);
+      }
+      if (status === 'error') {
+        console.log('[Splash] video statusChange error:', error);
+        advanceFromVideo();
+      }
+    });
+    return () => sub.remove();
+  }, [isReady, screenIndex]);
+
   useEffect(() => {
     const cancelled = { value: false };
     console.log('[Splash] ready — images loaded from local assets');
@@ -194,35 +219,11 @@ export default function OnboardingSplash({ onComplete }: Props) {
           {screenIndex === 0 ? (
             /* ── Video Intro Screen ───────────────────────── */
             <View style={StyleSheet.absoluteFillObject}>
-              <Video
-                source={INTRO_VIDEO}
+              <VideoView
+                player={introPlayer}
                 style={StyleSheet.absoluteFillObject}
-                resizeMode={ResizeMode.COVER}
-                shouldPlay
-                isMuted
-                isLooping={false}
-                onReadyForDisplay={() => {
-                  console.log('[Splash] video onReadyForDisplay — starting 5s timer');
-                  if (videoTimeoutRef.current) clearTimeout(videoTimeoutRef.current);
-                  videoTimeoutRef.current = setTimeout(() => {
-                    console.log('[Splash] 5s video timer fired');
-                    advanceFromVideo();
-                  }, 5000);
-                }}
-                onError={() => {
-                  console.log('[Splash] video onError — skipping');
-                  advanceFromVideo();
-                }}
-                onPlaybackStatusUpdate={(status: AVPlaybackStatus) => {
-                  if (status.isLoaded && status.didJustFinish) {
-                    console.log('[Splash] video finished naturally');
-                    advanceFromVideo();
-                  }
-                  if (!status.isLoaded && status.error) {
-                    console.log('[Splash] video playback error:', status.error);
-                    advanceFromVideo();
-                  }
-                }}
+                contentFit="cover"
+                nativeControls={false}
               />
               <Pressable
                 onPress={() => {
