@@ -1,0 +1,8 @@
+# Add these lines to android/gradle.properties AFTER running: npx expo prebuild --platform android --clean
+# Place your my-release-key.jks file inside android/app/ folder
+
+newArchEnabled=true
+MYAPP_RELEASE_STORE_FILE=my-release-key.jks
+MYAPP_RELEASE_KEY_ALIAS=my-key-alias
+MYAPP_RELEASE_STORE_PASSWORD=aseas@#
+MYAPP_RELEASE_KEY_PASSWORD=aseas@#

@@ -94,3 +94,64 @@ Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHea
 ### `scripts` (`@workspace/scripts`)
 
 Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.
+
+---
+
+## WishMe Mobile App (Standalone)
+
+A standalone Expo React Native project lives at `mobile/`. It is NOT part of the pnpm workspace — it has its own `package.json` and installs dependencies only inside `mobile/node_modules`.
+
+The full project is also pushed to: https://github.com/Prashant-Patole/WishMeFinal.git
+
+### Stack
+- **Expo SDK**: 54
+- **React Native**: 0.81.5
+- **React**: 19.1.0
+- **Router**: expo-router ~6.0.17
+- **Styling**: Custom theme system (ThemeContext, lightColors/darkColors)
+- **Auth**: Local AsyncStorage-based AuthContext (API integration pending)
+- **Navigation**: Expo Router with (auth)/, (tabs)/, and direct route screens
+
+### Structure
+```
+mobile/
+├── app/                      # Expo Router screens
+│   ├── _layout.tsx           # Root layout — NO KeyboardProvider (release build safe)
+│   ├── (auth)/               # Auth flow: login, signup, OTP, plan selection
+│   ├── (tabs)/               # Tab navigator: home, celebrities, music, profile, voice-call
+│   ├── booking/[id].tsx      # Dynamic booking screen
+│   ├── celebrity/[id].tsx    # Celebrity profile
+│   ├── chat/[id].tsx         # Chat screen
+│   └── ...                   # wallet, referrals, loved-ones, photo-wish, etc.
+├── components/               # Shared UI: DrawerMenu, ErrorBoundary, Icon, OnboardingSplash, ui/
+├── contexts/                 # AuthContext, DrawerContext, ThemeContext
+├── constants/                # colors.ts, fonts.ts, theme.ts
+├── assets/                   # fonts (Feather.ttf), images, splash screens, videos
+├── android-signing-templates/ # Gradle signing config templates for release APK
+├── package.json              # standalone deps, main=expo-router/entry
+├── app.json                  # newArchEnabled=true, reactCompiler=false
+├── babel.config.js           # api.cache(false)
+├── metro.config.js           # unstable_enablePackageExports + resolveRequest
+└── tsconfig.json             # expo base, @/* path alias
+```
+
+### Known Config Fixes Applied
+| File | Fix | Reason |
+|------|-----|--------|
+| `app.json` | `newArchEnabled: true` | Required by reanimated/worklets |
+| `app.json` | `reactCompiler: false` | Prevents useMemoCache crash in release |
+| `babel.config.js` | `api.cache(false)` | Prevents stale transforms in release |
+| `metro.config.js` | `unstable_enablePackageExports: true` | Fixes expo-router/entry resolution |
+| `metro.config.js` | `resolveRequest` hook | Forces single react/react-native instance |
+| `app/_layout.tsx` | No KeyboardProvider | Crashes Android release builds |
+
+### Building Release APK (Windows)
+1. `npm install` inside `mobile/`
+2. `npx expo prebuild --platform android --clean`
+3. Apply `android-signing-templates/gradle.properties.template` → `android/gradle.properties`
+4. Apply `android-signing-templates/build.gradle.signing.template` → `android/app/build.gradle`
+5. Copy `my-release-key.jks` into `android/app/`
+6. `cd android && .\gradlew assembleRelease --rerun-tasks`
+7. APK at: `android\app\build\outputs\apk\release\app-release.apk`
+
+Keystore alias: `my-key-alias` | Password: `aseas@#`

@@ -1,0 +1,38 @@
+// Add this signingConfigs block to android/app/build.gradle
+// Place it OUTSIDE AND ABOVE buildTypes, inside the android { } block.
+//
+// IMPORTANT: signingConfigs must come before buildTypes — Gradle reads top-to-bottom.
+//
+// Example of correct placement:
+//
+//   android {
+//       compileSdkVersion ...
+//       ...
+//
+//       signingConfigs {            <-- ADD THIS BLOCK FIRST
+//           release {
+//               storeFile file(MYAPP_RELEASE_STORE_FILE)
+//               storePassword MYAPP_RELEASE_STORE_PASSWORD
+//               keyAlias MYAPP_RELEASE_KEY_ALIAS
+//               keyPassword MYAPP_RELEASE_KEY_PASSWORD
+//           }
+//       }
+//
+//       buildTypes {               <-- THEN THIS
+//           release {
+//               signingConfig signingConfigs.release
+//               minifyEnabled true
+//               shrinkResources true
+//               proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+//           }
+//       }
+//   }
+
+signingConfigs {
+    release {
+        storeFile file(MYAPP_RELEASE_STORE_FILE)
+        storePassword MYAPP_RELEASE_STORE_PASSWORD
+        keyAlias MYAPP_RELEASE_KEY_ALIAS
+        keyPassword MYAPP_RELEASE_KEY_PASSWORD
+    }
+}
