@@ -279,7 +279,7 @@ export default function OnboardingSplash({ onComplete }: Props) {
           ) : (
             /* ── Image Slide Screen ───────────────────────── */
             <Animated.View style={[StyleSheet.absoluteFillObject, { opacity: screenOpacity }]}>
-              {/* Tall image container (SCREEN_W × 1.6) — contain keeps full subject visible without cropping */}
+              {/* Square image container — image fills top of slide, face visible immediately */}
               <Animated.View
                 style={[
                   {
@@ -295,8 +295,8 @@ export default function OnboardingSplash({ onComplete }: Props) {
               >
                 <Image
                   source={slide!.image}
-                  style={StyleSheet.absoluteFillObject}
-                  resizeMode="contain"
+                  style={{ position: 'absolute', top: 0, left: 0, right: 0, aspectRatio: 1 }}
+                  resizeMode="cover"
                   onLoad={() => console.log(`[Splash] image ${screenIndex} loaded`)}
                   onError={(e) => console.log(`[Splash] image ${screenIndex} error:`, e.nativeEvent.error)}
                 />
