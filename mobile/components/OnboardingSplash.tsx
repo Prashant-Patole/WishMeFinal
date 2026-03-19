@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Animated,
+  Dimensions,
   Image,
   Platform,
   Pressable,
@@ -12,11 +13,14 @@ import {
   Text,
   View,
 } from 'react-native';
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { fontSize } from '@/constants/fonts';
 import { radius, shadows } from '@/constants/theme';
 import { useTheme } from '@/contexts/ThemeContext';
+
+const SCREEN_W = Dimensions.get('window').width;
 
 const LOGO = require('../assets/images/wishme-logo.png');
 const INTRO_VIDEO = require('../assets/videos/intro-wish.mp4');
@@ -236,17 +240,24 @@ export default function OnboardingSplash({ onComplete }: Props) {
           ) : (
             /* ── Image Slide Screen ───────────────────────── */
             <Animated.View style={[StyleSheet.absoluteFillObject, { opacity: screenOpacity }]}>
-              {/* Full-screen background image — scale on View, not Image */}
+              {/* Square image container at top — matches square image dimensions so full subject is visible */}
               <Animated.View
                 style={[
-                  StyleSheet.absoluteFillObject,
-                  { backgroundColor: '#000', transform: [{ scale: imageScale }] },
+                  {
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: SCREEN_W,
+                    backgroundColor: '#000',
+                  },
+                  { transform: [{ scale: imageScale }] },
                 ]}
               >
                 <Image
                   source={slide!.image}
                   style={StyleSheet.absoluteFillObject}
-                  resizeMode="contain"
+                  resizeMode="cover"
                   onLoad={() => console.log(`[Splash] image ${screenIndex} loaded`)}
                   onError={(e) => console.log(`[Splash] image ${screenIndex} error:`, e.nativeEvent.error)}
                 />
