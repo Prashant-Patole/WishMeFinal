@@ -7,7 +7,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_ROUTER_APP_ROOT": "mobile/app"
+        "EXPO_ROUTER_APP_ROOT": "/home/expo/workingdir/build/mobile/app"
       }
     },
     "preview": {
@@ -16,7 +16,7 @@
       },
       "distribution": "internal",
       "env": {
-        "EXPO_ROUTER_APP_ROOT": "mobile/app"
+        "EXPO_ROUTER_APP_ROOT": "/home/expo/workingdir/build/mobile/app"
       }
     },
     "production": {
@@ -24,7 +24,7 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_ROUTER_APP_ROOT": "mobile/app"
+        "EXPO_ROUTER_APP_ROOT": "/home/expo/workingdir/build/mobile/app"
       }
     }
   },
