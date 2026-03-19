@@ -152,24 +152,37 @@ export default function OnboardingSplash({ onComplete }: Props) {
   });
 
   useEffect(() => {
-    if (!isReady || screenIndex !== 0 || Platform.OS === 'web') return;
+    if (Platform.OS === 'web') return;
+
+    const armTimer = () => {
+      introPlayer.play();
+      if (videoTimeoutRef.current) clearTimeout(videoTimeoutRef.current);
+      videoTimeoutRef.current = setTimeout(() => {
+        console.log('[Splash] 5s video timer fired');
+        advanceFromVideo();
+      }, 5000);
+    };
+
+    // Subscribe first to avoid missing events during the status check below
     const sub = introPlayer.addListener('statusChange', ({ status, error }) => {
       if (status === 'readyToPlay') {
-        console.log('[Splash] video readyToPlay — playing + 5s timer');
-        introPlayer.play();
-        if (videoTimeoutRef.current) clearTimeout(videoTimeoutRef.current);
-        videoTimeoutRef.current = setTimeout(() => {
-          console.log('[Splash] 5s video timer fired');
-          advanceFromVideo();
-        }, 5000);
+        console.log('[Splash] video readyToPlay (event) — playing + 5s timer');
+        armTimer();
       }
       if (status === 'error') {
         console.log('[Splash] video statusChange error:', error);
         advanceFromVideo();
       }
     });
+
+    // Handle case where readyToPlay already fired before listener was registered
+    if (introPlayer.status === 'readyToPlay') {
+      console.log('[Splash] video already readyToPlay on mount — playing + 5s timer');
+      armTimer();
+    }
+
     return () => sub.remove();
-  }, [isReady, screenIndex]);
+  }, []);
 
   useEffect(() => {
     const cancelled = { value: false };
