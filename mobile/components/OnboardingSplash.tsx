@@ -287,7 +287,7 @@ export default function OnboardingSplash({ onComplete }: Props) {
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: SCREEN_W,
+                    height: SCREEN_W * 1.6,
                     backgroundColor: '#000',
                   },
                   { transform: [{ scale: imageScale }] },
@@ -296,7 +296,7 @@ export default function OnboardingSplash({ onComplete }: Props) {
                 <Image
                   source={slide!.image}
                   style={StyleSheet.absoluteFillObject}
-                  resizeMode="cover"
+                  resizeMode="contain"
                   onLoad={() => console.log(`[Splash] image ${screenIndex} loaded`)}
                   onError={(e) => console.log(`[Splash] image ${screenIndex} error:`, e.nativeEvent.error)}
                 />
