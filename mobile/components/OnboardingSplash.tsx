@@ -21,6 +21,7 @@ import { radius, shadows } from '@/constants/theme';
 import { useTheme } from '@/contexts/ThemeContext';
 
 const SCREEN_W = Dimensions.get('window').width;
+console.log('[Splash] module loaded SCREEN_W=', SCREEN_W);
 
 const LOGO = require('../assets/images/wishme-logo.png');
 const INTRO_VIDEO = require('../assets/videos/intro-wish.mp4');
@@ -298,7 +299,10 @@ export default function OnboardingSplash({ onComplete }: Props) {
                   style={{ position: 'absolute', top: 0, left: 0, width: SCREEN_W, height: SCREEN_W }}
                   resizeMode="cover"
                   onLoad={() => console.log(`[Splash] image ${screenIndex} loaded`)}
-                  onLayout={(e) => console.log('[Splash] imageLayout:', screenIndex, e.nativeEvent.layout)}
+                  onLayout={(e) => {
+                    const { width, height } = e.nativeEvent.layout;
+                    console.log(`[Splash] image onLayout: ${width}x${height} SCREEN_W=${SCREEN_W}`);
+                  }}
                   onError={(e) => console.log(`[Splash] image ${screenIndex} error:`, e.nativeEvent.error)}
                 />
               </Animated.View>
