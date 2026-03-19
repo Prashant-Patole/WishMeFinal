@@ -240,13 +240,13 @@ export default function OnboardingSplash({ onComplete }: Props) {
               <Animated.View
                 style={[
                   StyleSheet.absoluteFillObject,
-                  { transform: [{ scale: imageScale }] },
+                  { backgroundColor: '#000', transform: [{ scale: imageScale }] },
                 ]}
               >
                 <Image
                   source={slide!.image}
                   style={StyleSheet.absoluteFillObject}
-                  resizeMode="cover"
+                  resizeMode="contain"
                   onLoad={() => console.log(`[Splash] image ${screenIndex} loaded`)}
                   onError={(e) => console.log(`[Splash] image ${screenIndex} error:`, e.nativeEvent.error)}
                 />
