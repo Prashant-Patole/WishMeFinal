@@ -144,7 +144,7 @@ export default function OnboardingSplash({ onComplete }: Props) {
 
   useEffect(() => {
     const cancelled = { value: false };
-    console.log('[Splash] ready — images served via HTTPS');
+    console.log('[Splash] ready — images loaded from local assets');
     fadeGateAndReady('init', cancelled);
     return () => {
       cancelled.value = true;

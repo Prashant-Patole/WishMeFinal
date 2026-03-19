@@ -150,7 +150,6 @@ function VideoWishCard({ wish, isVisible = false }: { wish: typeof VIDEO_WISHES[
   const player = useVideoPlayer(wish.videoUri as number, (p) => {
     p.loop = true;
     p.muted = true;
-    p.play();
   });
 
   useEffect(() => {
