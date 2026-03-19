@@ -21,32 +21,30 @@ import { useTheme } from '@/contexts/ThemeContext';
 const LOGO = require('../assets/images/wishme-logo.png');
 const INTRO_VIDEO = require('../assets/videos/intro-wish.mp4');
 
-const BASE = `https://${process.env.EXPO_PUBLIC_DOMAIN}/api/splash`;
-
 const SLIDES = [
   {
     id: '1',
     title: 'Wish a Friend',
     description: 'Send personalized video wishes to your loved ones',
-    image: { uri: `${BASE}/splash1.png` },
+    image: require('../assets/splash/splash1.png'),
   },
   {
     id: '2',
     title: 'Wish a Celebrity',
     description: 'Get personalized video messages from your favorite celebrities',
-    image: { uri: `${BASE}/splash2.jpeg` },
+    image: require('../assets/splash/splash2.jpeg'),
   },
   {
     id: '3',
     title: 'Make Promotion Ads',
     description: 'Create professional promotion videos with celebrity endorsements',
-    image: { uri: `${BASE}/splash3.jpeg` },
+    image: require('../assets/splash/splash3.jpeg'),
   },
   {
     id: '4',
     title: 'UGC Videos',
     description: 'User-generated content videos with celebrity collaborations',
-    image: { uri: `${BASE}/splash4.jpeg` },
+    image: require('../assets/splash/splash4.jpeg'),
   },
 ];
 

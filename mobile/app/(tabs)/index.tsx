@@ -1,8 +1,8 @@
 import { Icon, IconName } from '@/components/Icon';
-import { Video, ResizeMode, AVPlaybackSource } from 'expo-av';
+import { VideoView, useVideoPlayer } from 'expo-video';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -147,54 +147,50 @@ function VideoWishCard({ wish, isVisible = false }: { wish: typeof VIDEO_WISHES[
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
 
-  const source: AVPlaybackSource | null = wish.videoUri
-    ? (typeof wish.videoUri === 'number' ? wish.videoUri : { uri: wish.videoUri as string })
-    : null;
+  const player = useVideoPlayer(wish.videoUri as number, (p) => {
+    p.loop = true;
+    p.muted = true;
+    p.play();
+  });
+
+  useEffect(() => {
+    if (isVisible && isPlaying) {
+      player.play();
+    } else {
+      player.pause();
+    }
+  }, [isVisible, isPlaying]);
+
+  useEffect(() => {
+    player.muted = isMuted;
+  }, [isMuted]);
 
   return (
     <View style={[styles.videoWishCard, { backgroundColor: colors.card, ...shadows.md }]}>
-      {source ? (
-        <View style={styles.videoThumbContainer}>
-          <Video
-            source={source}
-            style={styles.videoThumb}
-            resizeMode={ResizeMode.COVER}
-            shouldPlay={isVisible && isPlaying}
-            isLooping
-            isMuted={isMuted}
-          />
-          <Pressable
-            onPress={() => setIsPlaying(p => !p)}
-            style={[styles.videoPlayPauseBtn, { backgroundColor: colors.background + '59' }]}
-          >
-            <Icon name={isPlaying ? 'pause' : 'play-circle'} size={28} color={colors.secondaryForeground} />
-          </Pressable>
-          <View style={[styles.videoTag, { backgroundColor: colors.background + '59' }]}>
-            <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 11, color: colors.secondaryForeground, letterSpacing: 0.5 }}>
-              {wish.tag}
-            </Text>
-          </View>
-          <Pressable onPress={() => setIsMuted(m => !m)} style={[styles.videoMuteBtn, { backgroundColor: colors.background + '59' }]}>
-            <Icon name={isMuted ? 'volume-x' : 'volume-2'} size={14} color={colors.secondaryForeground} />
-          </Pressable>
-        </View>
-      ) : (
-        <LinearGradient
-          colors={wish.gradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+      <View style={styles.videoThumbContainer}>
+        <VideoView
+          player={player}
           style={styles.videoThumb}
+          contentFit="cover"
+          nativeControls={false}
+          allowsFullscreen={false}
+          allowsPictureInPicture={false}
+        />
+        <Pressable
+          onPress={() => setIsPlaying(p => !p)}
+          style={[styles.videoPlayPauseBtn, { backgroundColor: colors.background + '59' }]}
         >
-          <View style={[styles.videoPlayBtn, { opacity: 0.92 }]}>
-            <Icon name="play-circle" size={52} color={colors.secondaryForeground} />
-          </View>
-          <View style={[styles.videoTag, { backgroundColor: colors.background + '59' }]}>
-            <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 11, color: colors.secondaryForeground, letterSpacing: 0.5 }}>
-              {wish.tag}
-            </Text>
-          </View>
-        </LinearGradient>
-      )}
+          <Icon name={isPlaying ? 'pause' : 'play-circle'} size={28} color={colors.secondaryForeground} />
+        </Pressable>
+        <View style={[styles.videoTag, { backgroundColor: colors.background + '59' }]}>
+          <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 11, color: colors.secondaryForeground, letterSpacing: 0.5 }}>
+            {wish.tag}
+          </Text>
+        </View>
+        <Pressable onPress={() => setIsMuted(m => !m)} style={[styles.videoMuteBtn, { backgroundColor: colors.background + '59' }]}>
+          <Icon name={isMuted ? 'volume-x' : 'volume-2'} size={14} color={colors.secondaryForeground} />
+        </Pressable>
+      </View>
 
       <View style={styles.videoWishContent}>
         <Text style={{ fontFamily: 'PlayfairDisplay_700Bold', fontSize: 18, lineHeight: 26, color: colors.foreground, marginBottom: 8 }}>
