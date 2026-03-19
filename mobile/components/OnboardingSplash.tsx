@@ -74,6 +74,8 @@ export default function OnboardingSplash({ onComplete }: Props) {
   const videoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const advanceRef = useRef<() => void>(() => undefined);
   const hasAdvancedFromVideo = useRef(false);
+  const videoReadyToPlay = useRef(false);
+  const isReadyRef = useRef(false);
 
   const fadeGateAndReady = useCallback(
     (source: string, cancelled: { value: boolean }) => {
@@ -151,23 +153,34 @@ export default function OnboardingSplash({ onComplete }: Props) {
     p.muted = true;
   });
 
+  // Effect 1: keep isReadyRef in sync so Effect 2's closure can read it
+  useEffect(() => {
+    isReadyRef.current = isReady;
+  }, [isReady]);
+
+  const armVideoTimer = useCallback(() => {
+    if (videoTimeoutRef.current) clearTimeout(videoTimeoutRef.current);
+    videoTimeoutRef.current = setTimeout(() => {
+      console.log('[Splash] 5s video timer fired');
+      advanceFromVideo();
+    }, 5000);
+  }, []);
+
+  // Effect 2: subscribe to player status events — no isReady gate to avoid missing readyToPlay.
+  // Plays immediately on ready; arms 5s timer only if the splash gate is already dismissed.
+  // If gate isn't dismissed yet, Effect 3 below arms the timer once isReady flips.
   useEffect(() => {
     if (Platform.OS === 'web') return;
 
-    const armTimer = () => {
-      introPlayer.play();
-      if (videoTimeoutRef.current) clearTimeout(videoTimeoutRef.current);
-      videoTimeoutRef.current = setTimeout(() => {
-        console.log('[Splash] 5s video timer fired');
-        advanceFromVideo();
-      }, 5000);
-    };
-
-    // Subscribe first to avoid missing events during the status check below
     const sub = introPlayer.addListener('statusChange', ({ status, error }) => {
       if (status === 'readyToPlay') {
-        console.log('[Splash] video readyToPlay (event) — playing + 5s timer');
-        armTimer();
+        console.log('[Splash] video readyToPlay (event) — playing');
+        introPlayer.play();
+        videoReadyToPlay.current = true;
+        if (isReadyRef.current && screenIndex === 0) {
+          console.log('[Splash] gate already dismissed — arming 5s timer');
+          armVideoTimer();
+        }
       }
       if (status === 'error') {
         console.log('[Splash] video statusChange error:', error);
@@ -175,14 +188,26 @@ export default function OnboardingSplash({ onComplete }: Props) {
       }
     });
 
-    // Handle case where readyToPlay already fired before listener was registered
+    // Close race: check status synchronously after subscribing
     if (introPlayer.status === 'readyToPlay') {
-      console.log('[Splash] video already readyToPlay on mount — playing + 5s timer');
-      armTimer();
+      console.log('[Splash] video already readyToPlay on mount — playing');
+      introPlayer.play();
+      videoReadyToPlay.current = true;
+      if (isReadyRef.current && screenIndex === 0) {
+        armVideoTimer();
+      }
     }
 
     return () => sub.remove();
   }, []);
+
+  // Effect 3: arm timer when splash gate dismisses and video is already ready
+  useEffect(() => {
+    if (!isReady || screenIndex !== 0 || Platform.OS === 'web') return;
+    if (!videoReadyToPlay.current && introPlayer.status !== 'readyToPlay') return;
+    console.log('[Splash] gate dismissed, video ready — arming 5s timer');
+    armVideoTimer();
+  }, [isReady, screenIndex]);
 
   useEffect(() => {
     const cancelled = { value: false };
