@@ -27,7 +27,7 @@ const RELATIONS = ['Mother', 'Father', 'Sister', 'Brother', 'Wife', 'Husband', '
 
 function PersonCard({ person, onDelete }: { person: typeof INITIAL_LOVED_ONES[0]; onDelete: () => void }) {
   const { colors } = useTheme();
-  const avatarColors: Record<string, string[]> = {
+  const avatarColors: Record<string, [string, string]> = {
     Sister: ['#FF6B33', '#E8527A'],
     Father: ['#3B82F6', '#1D4ED8'],
     Mother: ['#EC4899', '#BE185D'],

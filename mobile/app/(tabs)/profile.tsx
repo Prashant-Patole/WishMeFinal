@@ -19,7 +19,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { fontVariants } from '@/constants/fonts';
 import { radius, shadows } from '@/constants/theme';
 
-const PLAN_COLORS: Record<string, string[]> = {
+const PLAN_COLORS: Record<string, [string, string]> = {
   free: ['#6B7085', '#9CA3AF'],
   silver: ['#9CA3AF', '#D1D5DB'],
   gold: ['#F59E0B', '#FBBF24'],
